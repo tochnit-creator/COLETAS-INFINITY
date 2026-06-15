@@ -141,6 +141,8 @@
   .total-box.frota .tv{color:var(--frota-d)}.total-box.transp .tv{color:var(--transp-d)}
   .pctline{font-size:12.5px;color:var(--muted);margin-top:9px;text-align:right}
   .pctline b{font-family:'Barlow Semi Condensed',sans-serif;color:var(--text);font-size:15px}
+  .diffhelp{margin-top:9px;background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--transp);border-radius:9px;padding:10px 12px;font-size:12.5px;color:var(--muted);line-height:1.55}
+  .diffhelp b{color:var(--text);font-weight:700}
 
   .toggle{display:flex;align-items:center;gap:10px;padding:9px 0;cursor:pointer}
   .toggle input{position:absolute;opacity:0;width:0;height:0}
@@ -295,9 +297,10 @@
           <div class="divline" style="margin-top:16px"></div>
           <div class="glabel">Diferença entre as opções</div>
           <div class="items">
-            <div class="rowline"><span class="lbl">Economia na opção mais barata</span><span class="v num" id="dAbs"></span></div>
-            <div class="rowline"><span class="lbl"><small>Em % sobre a opção mais cara</small></span><span class="v num" id="dRel"></span></div>
+            <div class="rowline"><span class="lbl">Economia (R$) na opção mais barata</span><span class="v num" id="dAbs"></span></div>
+            <div class="rowline"><span class="lbl" id="dRelLbl">Quanto a mais barata custa a menos</span><span class="v num" id="dRel"></span></div>
           </div>
+          <div class="diffhelp" id="diffHelp"></div>
           <div class="divline"></div>
           <div class="glabel">Por entrega</div>
           <div class="items">
@@ -336,7 +339,7 @@
   </div></main>
 
 <script>
-const ROMANEIOS = [{"id": "81731", "rotaLabel": "DOCA17 · SJ.Rio Preto", "km": 1900, "transportadora": 4616.04, "motoristas": 1, "diarias": 4, "sequencia": "Mauá → Bálsamo → Tanabi → Monte Aprazível → Sebastianópolis do Sul → Floreal → General Salgado → Sto. Antônio do Aracanguá → Marinópolis → Urânia → Jales → Votuporanga → Cosmorama → Américo de Campos → Pontes Gestal → Riolândia → Cardoso → Paulo de Faria → Orindiúva → Mauá", "entregas": [{"cli": "Alessandro Pereira Fiamenghi 29211678838", "cid": "Balsamo", "nf": 530592, "vol": 7, "nv": 662.36}, {"cli": "Energia Materiais Eletricos", "cid": "Tanabi", "nf": 530589, "vol": 5, "nv": 1376.28}, {"cli": "I9 Assessoria, Materiais E Construcao", "cid": "Tanabi", "nf": 530590, "vol": 5, "nv": 551.4}, {"cli": "Rubio Materias Para Construcoes", "cid": "Tanabi", "nf": 530591, "vol": 5, "nv": 400.69}, {"cli": "Mazza Materiais P/ Construções & Telefonia Celular", "cid": "Monte Aprazivel", "nf": 530571, "vol": 20, "nv": 3068.0}, {"cli": "Deposito Sao Jose", "cid": "Sebastianopolis Do Sul", "nf": 530572, "vol": 3, "nv": 1569.16}, {"cli": "Joao Manoel De Castilho Material De Construcao", "cid": "Floreal", "nf": 530560, "vol": 9, "nv": 1717.28}, {"cli": "Ebm - Materiais Para Construcao", "cid": "General Salgado", "nf": 530573, "vol": 2, "nv": 557.69}, {"cli": "Construforte Materiais Para Construções", "cid": "Santo Antonio Do Aracangua", "nf": 530574, "vol": 20, "nv": 3068.0}, {"cli": "Gea Materiais Para Construcao", "cid": "Marinopolis", "nf": 530575, "vol": 20, "nv": 3068.0}, {"cli": "Marin Materiais Para Construção", "cid": "Urania", "nf": 530576, "vol": 20, "nv": 3068.0}, {"cli": "Sired Materiais Eletricos, Hidraulicos E De Constr", "cid": "Jales", "nf": 530577, "vol": 10, "nv": 1056.98}, {"cli": "Gerson Materiais Para Construcao", "cid": "Votuporanga", "nf": 530578, "vol": 3, "nv": 503.65}, {"cli": "Concal Mat.P/Construcao", "cid": "Votuporanga", "nf": 530579, "vol": 11, "nv": 1916.35}, {"cli": "Mdm Materiais Eletricos E Hidraulicos.", "cid": "Cosmorama", "nf": 530588, "vol": 6, "nv": 789.3}, {"cli": "J.J.R. Construcoes", "cid": "Americo De Campos", "nf": 530587, "vol": 4, "nv": 1167.0}, {"cli": "Melozi Materiais Para Construcao", "cid": "Pontes Gestal", "nf": 530586, "vol": 7, "nv": 879.62}, {"cli": "Choque Materiais Para Construcao", "cid": "Cardoso", "nf": 530580, "vol": 8, "nv": 778.1}, {"cli": "Ig Materiais Para Construcao", "cid": "Cardoso", "nf": 530582, "vol": 24, "nv": 1637.73}, {"cli": "Jose Vitor Materias Para Construcao", "cid": "Cardoso", "nf": 530581, "vol": 10, "nv": 3285.21}, {"cli": "Imperial Materiais Para Construcao", "cid": "Riolandia", "nf": 530583, "vol": 7, "nv": 1595.25}, {"cli": "Rossi Paulo De Faria Materiais Para Construcao Ltd", "cid": "Paulo De Faria", "nf": 530585, "vol": 8, "nv": 1733.53}, {"cli": "Construcenter Com. De Materiais De Construcao", "cid": "Orindiuva", "nf": 530584, "vol": 2, "nv": 1038.61}]}];
+const ROMANEIOS = [{"id": "81731", "rotaLabel": "DOCA17 · SJ.Rio Preto", "km": 1900, "transportadora": 4616.04, "motoristas": 1, "diarias": 4, "sequencia": "Mauá → Bálsamo → Tanabi → Monte Aprazível → Sebastianópolis do Sul → Floreal → General Salgado → Sto. Antônio do Aracanguá → Marinópolis → Urânia → Jales → Votuporanga → Cosmorama → Américo de Campos → Pontes Gestal → Riolândia → Cardoso → Paulo de Faria → Orindiúva → Mauá", "entregas": [{"cli": "Alessandro Pereira Fiamenghi 29211678838", "cid": "Balsamo", "nf": 530592, "vol": 7, "nv": 662.36}, {"cli": "Energia Materiais Eletricos", "cid": "Tanabi", "nf": 530589, "vol": 5, "nv": 1376.28}, {"cli": "I9 Assessoria, Materiais E Construcao", "cid": "Tanabi", "nf": 530590, "vol": 5, "nv": 551.4}, {"cli": "Rubio Materias Para Construcoes", "cid": "Tanabi", "nf": 530591, "vol": 5, "nv": 400.69}, {"cli": "Mazza Materiais P/ Construções & Telefonia Celular", "cid": "Monte Aprazivel", "nf": 530571, "vol": 20, "nv": 3068.0}, {"cli": "Deposito Sao Jose", "cid": "Sebastianopolis Do Sul", "nf": 530572, "vol": 3, "nv": 1569.16}, {"cli": "Joao Manoel De Castilho Material De Construcao", "cid": "Floreal", "nf": 530560, "vol": 9, "nv": 1717.28}, {"cli": "Ebm - Materiais Para Construcao", "cid": "General Salgado", "nf": 530573, "vol": 2, "nv": 557.69}, {"cli": "Construforte Materiais Para Construções", "cid": "Santo Antonio Do Aracangua", "nf": 530574, "vol": 20, "nv": 3068.0}, {"cli": "Gea Materiais Para Construcao", "cid": "Marinopolis", "nf": 530575, "vol": 20, "nv": 3068.0}, {"cli": "Marin Materiais Para Construção", "cid": "Urania", "nf": 530576, "vol": 20, "nv": 3068.0}, {"cli": "Sired Materiais Eletricos, Hidraulicos E De Constr", "cid": "Jales", "nf": 530577, "vol": 10, "nv": 1056.98}, {"cli": "Gerson Materiais Para Construcao", "cid": "Votuporanga", "nf": 530578, "vol": 3, "nv": 503.65}, {"cli": "Concal Mat.P/Construcao", "cid": "Votuporanga", "nf": 530579, "vol": 11, "nv": 1916.35}, {"cli": "Mdm Materiais Eletricos E Hidraulicos.", "cid": "Cosmorama", "nf": 530588, "vol": 6, "nv": 789.3}, {"cli": "J.J.R. Construcoes", "cid": "Americo De Campos", "nf": 530587, "vol": 4, "nv": 1167.0}, {"cli": "Melozi Materiais Para Construcao", "cid": "Pontes Gestal", "nf": 530586, "vol": 7, "nv": 879.62}, {"cli": "Choque Materiais Para Construcao", "cid": "Cardoso", "nf": 530580, "vol": 8, "nv": 778.1}, {"cli": "Ig Materiais Para Construcao", "cid": "Cardoso", "nf": 530582, "vol": 24, "nv": 1637.73}, {"cli": "Jose Vitor Materias Para Construcao", "cid": "Cardoso", "nf": 530581, "vol": 10, "nv": 3285.21}, {"cli": "Imperial Materiais Para Construcao", "cid": "Riolandia", "nf": 530583, "vol": 7, "nv": 1595.25}, {"cli": "Rossi Paulo De Faria Materiais Para Construcao Ltd", "cid": "Paulo De Faria", "nf": 530585, "vol": 8, "nv": 1733.53}, {"cli": "Construcenter Com. De Materiais De Construcao", "cid": "Orindiuva", "nf": 530584, "vol": 2, "nv": 1038.61}]}, {"id": "82449", "rotaLabel": "Mirassol/Franca", "km": 1990, "transportadora": 3778.01, "motoristas": 1, "diarias": 4, "sequencia": "Mauá → Itapui → Tabatinga → Itapolis → Tabapua → Sao Jose Do Rio Preto → Mirassol → Jose Bonifacio → Adolfo → Moncoes → Nova Luzitania → Floreal → Votuporanga → Cosmorama → Jardinopolis → Cravinhos → Itirapua → Franca → Rifaina → Mauá", "entregas": [{"cli": "Fozati Materiais Para Construcao Ltda", "cid": "Mirassol", "nf": 532434, "vol": 11, "nv": 1022.13}, {"cli": "Gonzaga Adolfo Materiais Para Construcao Ltda", "cid": "Adolfo", "nf": 532435, "vol": 8, "nv": 1622.42}, {"cli": "Graciani & Paulino Ltda", "cid": "Mirassol", "nf": 532436, "vol": 13, "nv": 1997.97}, {"cli": "L Da S Paz Material De Construcao", "cid": "Nova Luzitania", "nf": 532439, "vol": 9, "nv": 1405.4}, {"cli": "Mdo Agro Ltda", "cid": "Jardinopolis", "nf": 532440, "vol": 6, "nv": 1069.13}, {"cli": "A Loja Do Dilo Materiais Para Construcao Ltda", "cid": "Tabapua", "nf": 532448, "vol": 4, "nv": 1242.66}, {"cli": "Jair Zague Ltda", "cid": "Sao Jose Do Rio Preto", "nf": 532450, "vol": 4, "nv": 743.55}, {"cli": "Areias & Areias Ltda", "cid": "Itapui", "nf": 532449, "vol": 15, "nv": 2806.82}, {"cli": "D'Abruzzo & Silva Materiais De Construcao Ltda", "cid": "Tabatinga", "nf": 532431, "vol": 10, "nv": 4548.2}, {"cli": "Pinheiro & Mercaldi Ltda", "cid": "Itapolis", "nf": 532443, "vol": 2, "nv": 730.16}, {"cli": "Mult Lar Eletrica E Hidraulica Jb Ltda", "cid": "Jose Bonifacio", "nf": 532441, "vol": 4, "nv": 1478.96}, {"cli": "Flavio Ferrari-Construcao", "cid": "Moncoes", "nf": 532433, "vol": 2, "nv": 501.8}, {"cli": "Joao Manoel De Castilho Material De Construcao", "cid": "Floreal", "nf": 532438, "vol": 13, "nv": 3499.35}, {"cli": "Constru-Vale Materiais Para Construcao Ltda", "cid": "Votuporanga", "nf": 532430, "vol": 23, "nv": 4663.5}, {"cli": "Bacani & Correa Materiais Eletricos Ltda", "cid": "Cosmorama", "nf": 532429, "vol": 2, "nv": 530.1}, {"cli": "Toniato Materiais Para Construcao Ltda", "cid": "Rifaina", "nf": 532444, "vol": 6, "nv": 2375.4}, {"cli": "Edson Da Silva Soares 14959349859", "cid": "Franca", "nf": 532432, "vol": 5, "nv": 531.91}, {"cli": "V. F.F. Costa Ltda", "cid": "Itirapua", "nf": 532445, "vol": 3, "nv": 1108.93}, {"cli": "Jataqua Comercio Materiais Para Construcao Ltda", "cid": "Jardinopolis", "nf": 532437, "vol": 22, "nv": 6019.89}, {"cli": "P S Dos Santos Da Silva Materiais De Construcao", "cid": "Cravinhos", "nf": 532442, "vol": 1, "nv": 1217.82}]}];
 const $ = id => document.getElementById(id);
 const brl = v => 'R$ ' + (v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const brl0 = v => 'R$ ' + Math.round(v||0).toLocaleString('pt-BR');
@@ -400,18 +403,38 @@ function recalc(){
   $('tTotal').textContent=brl(transp);$('tPct').textContent=pctTxt(pct(transp,F));
 
   $('kEnt').textContent=n;$('kFat').textContent=brl0(F);
-  $('kTransp').textContent=brl0(transp);$('kFrota').textContent=brl0(frota);
-  $('kTranspPct').textContent=pctTxt(pct(transp,F));$('kFrotaPct').textContent=pctTxt(pct(frota,F));
+  $('kFrota').textContent=brl0(frota);$('kFrotaPct').textContent=pctTxt(pct(frota,F));
+
+  const semTransp = frete<=0;
+  $('kTransp').textContent=semTransp?'—':brl0(transp);
+  $('kTranspPct').textContent=semTransp?'a informar':pctTxt(pct(transp,F));
 
   const max=Math.max(frota,transp,1);
-  $('barFrota').style.width=(frota/max*100)+'%';$('barTransp').style.width=(transp/max*100)+'%';
-  $('barFrotaTxt').textContent=brl0(frota);$('barTranspTxt').textContent=brl0(transp);
+  $('barFrota').style.width=(frota/max*100)+'%';$('barTransp').style.width=(semTransp?0:transp/max*100)+'%';
+  $('barFrotaTxt').textContent=brl0(frota);$('barTranspTxt').textContent=semTransp?'a informar':brl0(transp);
+
+  if(semTransp){
+    $('verdictText').innerHTML='Informe o <b>valor cobrado da transportadora</b> para comparar. Custo da frota própria: <b>'+brl(frota)+'</b>.';
+    $('winName').textContent='Aguardando valor da transportadora';
+    $('dAbs').textContent='—';$('dRelLbl').textContent='Comparação indisponível';$('dRel').textContent='—';
+    $('diffHelp').innerHTML='Este romaneio ainda está <b>em trânsito</b> e não tem o valor cobrado pela transportadora. Digite o valor no campo acima que o comparativo aparece na hora.';
+    $('ppFrota').textContent=brl(frota/n);$('ppTransp').textContent='—';
+    return;
+  }
 
   const diff=Math.abs(frota-transp), cheaper=frota<transp?'Frota própria':'Transportadora', dearer=Math.max(frota,transp);
   $('verdictText').innerHTML = diff<0.5?'As duas opções custam <b>praticamente o mesmo</b>.':'<b>'+cheaper+'</b> sai mais barata por <b>'+brl(diff)+'</b>';
   $('winName').textContent = diff<0.5?'Empate técnico':cheaper+' mais barata';
   $('dAbs').textContent=brl(diff)+' ('+cheaper+')';
-  $('dRel').textContent=pctTxt(pct(diff,dearer))+' mais barata';
+  const pctMenos=pct(diff,dearer);
+  $('dRelLbl').textContent='A '+cheaper.toLowerCase()+' custa a menos';
+  $('dRel').textContent=pctTxt(pctMenos)+' a menos';
+  if(diff<0.5){
+    $('diffHelp').innerHTML='As duas opções custam praticamente o mesmo neste romaneio.';
+  } else {
+    const por100=(dearer>0?(Math.min(frota,transp)/dearer*100):0);
+    $('diffHelp').innerHTML='Lê-se assim: a <b>'+cheaper.toLowerCase()+'</b> custa <b>'+pctTxt(pctMenos)+' a menos</b> que a '+(frota<transp?'transportadora':'frota própria')+'. Ou seja, a cada <b>R$ 100,00</b> que a opção mais cara custaria, a mais barata sai por <b>'+brl(por100)+'</b>.';
+  }
   $('ppFrota').textContent=brl(frota/n);$('ppTransp').textContent=brl(transp/n);
 }
 let open=false;
